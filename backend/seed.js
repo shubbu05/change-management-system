@@ -49,7 +49,7 @@ const seedDB = async () => {
             await client.query(
                 `INSERT INTO Users (username, password_hash, email, contact_number, department, role_id) 
                  VALUES ($1, $2, $3, $4, $5, $6) 
-                 ON CONFLICT (username) DO NOTHING`,
+                 ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash`,
                 [u.username, password_hash, u.email, u.contact, u.dept, roleIds[u.role]]
             );
         }
