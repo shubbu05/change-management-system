@@ -41,6 +41,11 @@ pool.connect()
 // Start server
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Backend Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Backend Server running on port ${PORT}`);
+    });
+}
+
+// Export the Express API for Vercel
+module.exports = app;
