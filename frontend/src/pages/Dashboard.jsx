@@ -9,19 +9,23 @@ const Dashboard = () => {
     const [stats, setStats] = useState(null);
     const [priorityData, setPriorityData] = useState([]);
 
+    const [error, setError] = useState(null);
+
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
                 const res = await api.get('/reports/dashboard-stats');
-                setStats(res.data.stats);
+                setStats(res.data.stats || {}); // prevent null stuck
 
-                const formattedData = res.data.priorityBreakdown.map(item => ({
+                const formattedData = (res.data.priorityBreakdown || []).map(item => ({
                     name: item.priority || 'Unassigned',
                     value: parseInt(item.count)
                 }));
                 setPriorityData(formattedData);
             } catch (err) {
                 console.error('Failed to load dashboard', err);
+                setError(err.response?.data?.error || err.message || "Failed to load dashboard");
+                setStats({}); // unblock loading
             }
         };
         fetchDashboardData();
@@ -29,6 +33,7 @@ const Dashboard = () => {
 
     const COLORS = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6'];
 
+    if (error) return <div className="p-10 text-lg font-medium text-red-600">Error: {error}</div>;
     if (!stats) return <div className="p-10 text-lg font-medium text-gray-700">Loading Dashboard...</div>;
 
     return (
