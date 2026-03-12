@@ -17,8 +17,9 @@ const Login = () => {
             navigate("/dashboard");
         } catch (err) {
             setError(
-                err.response?.data?.error ||
-                "Login failed. Please check your credentials."
+                typeof err === 'string' 
+                    ? err 
+                    : err.response?.data?.error || "Login failed. Please check your credentials."
             );
         }
     };
